@@ -10,8 +10,8 @@ model = load_model(
     "modules/segmentation/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py",
     "modules/segmentation/GroundingDINO/weights/groundingdino_swint_ogc.pth",
 )
-IMAGE_PATH = "assets/cat_dog.jpeg"
-TEXT_PROMPT = "chair . person . dog ."
+IMAGE_PATH = "assets/apple_tree.jpg"
+TEXT_PROMPT = "apple . leaf . dog ."
 BOX_TRESHOLD = 0.35
 TEXT_TRESHOLD = 0.25
 
