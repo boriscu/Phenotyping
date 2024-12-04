@@ -1,4 +1,4 @@
-from modules.segmentation.GroundingDINO.groundingdino.util.inference import (
+from phenotyping.modules.segmentation.GroundingDINO.groundingdino.util.inference import (
     load_model,
     load_image,
     predict,
