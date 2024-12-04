@@ -1,36 +1,67 @@
 import gradio as gr
+from phenotyping.interfaces.base_interface import BaseInterface
 from phenotyping.services.app_factory_service import AppFactoryService
 from phenotyping.models.enumerations.app_type import AppType
 
 
-def create_interface():
-    def run_demo(image_path, text_prompt, box_threshold, text_threshold):
-        app_instance = AppFactoryService.get_app(AppType.GROUNDING_DINO_SEGMENTATION)
-        app_instance.run_app_demo(
-            image_path, text_prompt, box_threshold, text_threshold
-        )
-        return "Annotated image saved as 'annotated_image.jpg'"
+class HomePageInterface(BaseInterface):
+    def __init__(self) -> None:
+        """Initialize DemoService with the list of available application types."""
+        self.app_instance = None
+        self.interface = None
 
-    with gr.Blocks() as interface:
-        gr.Markdown("### GroundingDINO Segmentation Demo")
-        image_path = gr.Textbox(label="Image Path")
-        text_prompt = gr.Textbox(label="Text Prompt")
-        box_threshold = gr.Slider(
-            minimum=0.0, maximum=1.0, step=0.01, label="Box Threshold"
-        )
-        text_threshold = gr.Slider(
-            minimum=0.0, maximum=1.0, step=0.01, label="Text Threshold"
-        )
-        run_button = gr.Button("Run Segmentation")
-        run_button.click(
-            run_demo,
-            inputs=[image_path, text_prompt, box_threshold, text_threshold],
-            outputs=None,
-        )
+    def create_interface(self):
+        """Create the Gradio interface for the demo service."""
+        app_choices = [""] + [app.name.replace("_", " ").title() for app in AppType]
+        with gr.Blocks(theme=gr.themes.Soft()) as interface:
+            gr.Markdown("# Phenotyping playground")
+            gr.Markdown("***BioSense Institute***")
+            gr.Markdown("### Select an Application and Run Demo")
 
-    return interface
+            dropdown = gr.Dropdown(
+                choices=app_choices, label="Choose Application", value=""
+            )
+            run_button = gr.Button("Run Demo")
 
+            demo_output = gr.Textbox(label="Demo Output")
 
-def launch():
-    interface = create_interface()
-    interface.launch()
+            def on_dropdown_change(choice):
+                """Handle changes in the dropdown to initialize the app or reset the interface."""
+                if choice:
+                    message = self.choose_app(choice)
+                    return message
+                else:
+                    self.app_instance = None
+                    return "Please select an application."
+
+            def run_demo():
+                """Execute the demo of the selected application."""
+                if self.app_instance:
+                    return self.app_instance.run_app_demo()
+                else:
+                    return "No application selected or loaded."
+
+            dropdown.change(
+                on_dropdown_change, inputs=[dropdown], outputs=[demo_output]
+            )
+            run_button.click(run_demo, inputs=[], outputs=[demo_output])
+
+            self.interface = interface
+        return interface
+
+    def choose_app(self, choice: str):
+        """Select and initialize the application based on user choice."""
+        app_type_name = choice.replace(" ", "_").upper()
+        try:
+            app_type = AppType[app_type_name]
+            self.app_instance = AppFactoryService.get_app(app_type)
+            return f"{choice} loaded. Click 'Run Demo' to start."
+        except KeyError:
+            self.app_instance = None
+            return "Application not found."
+
+    def launch(self):
+        """Launch the Gradio interface."""
+        if not self.interface:
+            self.create_interface()
+        self.interface.launch()

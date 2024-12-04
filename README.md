@@ -1,5 +1,11 @@
 # Phenotyping
 
+To run the phenotyping playground demo, position yourself in the project root and execute the following
+
+```
+python demo.py
+```
+
 ## Segmentation
 
 ### Grounding DINO Setup
