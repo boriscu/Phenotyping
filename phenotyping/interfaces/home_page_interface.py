@@ -16,35 +16,36 @@ class HomePageInterface(BaseInterface):
         with gr.Blocks(theme=gr.themes.Soft()) as interface:
             gr.Markdown("# Phenotyping playground")
             gr.Markdown("***BioSense Institute***")
-            gr.Markdown("### Select an Application and Run Demo")
+            gr.Markdown("## Select an Application and Run the Demo")
 
             dropdown = gr.Dropdown(
                 choices=app_choices, label="Choose Application", value=""
             )
-            run_button = gr.Button("Run Demo")
+            with gr.Row():
+                run_button = gr.Button("Run Demo")
+                app_status = gr.Textbox(label="App Status", interactive=False)
 
-            demo_output = gr.Textbox(label="Demo Output")
+            image_output = gr.Image(label="Demo Output", type="numpy")
 
             def on_dropdown_change(choice):
                 """Handle changes in the dropdown to initialize the app or reset the interface."""
                 if choice:
                     message = self.choose_app(choice)
-                    return message
                 else:
                     self.app_instance = None
-                    return "Please select an application."
+                    message = "Please select an application."
+                return message
 
             def run_demo():
                 """Execute the demo of the selected application."""
                 if self.app_instance:
-                    return self.app_instance.run_app_demo()
+                    image_path = self.app_instance.run_app_demo()
+                    return image_path
                 else:
                     return "No application selected or loaded."
 
-            dropdown.change(
-                on_dropdown_change, inputs=[dropdown], outputs=[demo_output]
-            )
-            run_button.click(run_demo, inputs=[], outputs=[demo_output])
+            dropdown.change(on_dropdown_change, inputs=[dropdown], outputs=[app_status])
+            run_button.click(run_demo, inputs=[], outputs=[image_output])
 
             self.interface = interface
         return interface

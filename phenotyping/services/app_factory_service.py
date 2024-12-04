@@ -10,5 +10,5 @@ class AppFactoryService:
     @staticmethod
     def get_app(app_type: AppType) -> Optional[BaseApp]:
         if app_type == AppType.GROUNDING_DINO_SEGMENTATION:
-            return GroundingDinoSegmentationApp(app_type=app_type)
+            return GroundingDinoSegmentationApp()
         return None
