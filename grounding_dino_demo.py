@@ -11,9 +11,9 @@ model = load_model(
     "modules/segmentation/GroundingDINO/weights/groundingdino_swint_ogc.pth",
 )
 IMAGE_PATH = "assets/apple_tree.jpg"
-TEXT_PROMPT = "apple . leaf . dog ."
-BOX_TRESHOLD = 0.35
-TEXT_TRESHOLD = 0.25
+TEXT_PROMPT = "leaf . branch . tree ."
+BOX_TRESHOLD = 0.25
+TEXT_TRESHOLD = 0.15
 
 image_source, image = load_image(IMAGE_PATH)
 
