@@ -1,14 +1,21 @@
+import gradio as gr
 from abc import ABC, abstractmethod
-from typing import Any
 
 
 class BaseInterface(ABC):
     @abstractmethod
-    def create_interface(self) -> Any:
+    def create_interface(self) -> gr.Blocks:
         """
         Create and return a Gradio interface.
 
         Returns:
-            Any: The created Gradio interface.
+            gr.Blocks: The created Gradio interface.
+        """
+        pass
+
+    @abstractmethod
+    def launch(self) -> None:
+        """
+        Launch the Gradio interface.
         """
         pass
