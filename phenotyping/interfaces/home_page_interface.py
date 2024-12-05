@@ -21,6 +21,9 @@ class HomePageInterface(BaseInterface):
             dropdown = gr.Dropdown(
                 choices=app_choices, label="Choose Application", value=""
             )
+
+            uploaded_image = gr.Image(label="Upload an Image", type="filepath")
+
             with gr.Row():
                 run_button = gr.Button("Run Demo")
                 app_status = gr.Textbox(label="App Status", interactive=False)
@@ -36,16 +39,16 @@ class HomePageInterface(BaseInterface):
                     message = "Please select an application."
                 return message
 
-            def run_demo():
+            def run_demo(image_path):
                 """Execute the demo of the selected application."""
                 if self.app_instance:
-                    image_path = self.app_instance.run_app_demo()
-                    return image_path
+                    output_image = self.app_instance.run_app_demo(image_path=image_path)
+                    return output_image
                 else:
                     return "No application selected or loaded."
 
             dropdown.change(on_dropdown_change, inputs=[dropdown], outputs=[app_status])
-            run_button.click(run_demo, inputs=[], outputs=[image_output])
+            run_button.click(run_demo, inputs=[uploaded_image], outputs=[image_output])
 
             self.interface = interface
         return interface
