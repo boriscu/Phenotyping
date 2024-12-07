@@ -32,6 +32,10 @@ class HomePageInterface(BaseInterface):
 
         dropdown = gr.Dropdown(choices=app_choices, label="Choose Application")
         uploaded_image = gr.Image(label="Upload an Image", type="filepath")
+        text_prompt = gr.Textbox(
+            label="Text Prompt",
+            placeholder="Enter objects to segment (e.g., 'leaf . apple . branch .')",
+        )
         run_button = gr.Button("Run Demo")
         app_status = gr.Textbox(label="App Status", interactive=False)
         image_output = gr.Image(label="Demo Output", type="numpy")
@@ -40,7 +44,7 @@ class HomePageInterface(BaseInterface):
             self._on_dropdown_change, inputs=[dropdown], outputs=[app_status]
         )
         run_button.click(
-            self._run_demo, inputs=[uploaded_image], outputs=[image_output]
+            self._run_demo, inputs=[uploaded_image, text_prompt], outputs=[image_output]
         )
 
     def _on_dropdown_change(self, choice: str) -> str:
@@ -50,10 +54,13 @@ class HomePageInterface(BaseInterface):
         self.app_instance = None
         return "Please select an application."
 
-    def _run_demo(self, image_path: str) -> str:
+    def _run_demo(self, image_path: str, text_prompt: str) -> str:
         """Execute the demo of the selected application."""
         if self.app_instance:
-            return self.app_instance.run_app_demo(image_path=image_path)
+            text_prompt = text_prompt if text_prompt.strip() else None
+            return self.app_instance.run_app_demo(
+                image_path=image_path, text_prompt=text_prompt
+            )
         return "No application selected or loaded."
 
     def _choose_app(self, choice: str) -> str:

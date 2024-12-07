@@ -14,13 +14,13 @@ class GroundingDinoSegmentationApp(BaseApp):
     def __init__(self) -> None:
         super().__init__()
 
-    def run_app_demo(
-        self,
-        image_path: str = "assets/apple_tree.jpg",
-        text_prompt: str = "leaf . apple . branch .",
-        box_threshold: float = 0.25,
-        text_threshold: float = 0.15,
-    ) -> np.ndarray:
+    def run_app_demo(self, **kwargs) -> np.ndarray:
+
+        image_path = kwargs.get("image_path", "assets/apple_tree.jpg")
+        text_prompt = kwargs.get("text_prompt", "leaf . apple . branch .")
+        box_threshold = kwargs.get("box_threshold", 0.25)
+        text_threshold = kwargs.get("text_threshold", 0.15)
+
         self.model = load_model(
             "phenotyping/modules/segmentation/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py",
             "phenotyping/modules/segmentation/GroundingDINO/weights/groundingdino_swint_ogc.pth",
